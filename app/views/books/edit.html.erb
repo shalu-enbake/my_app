@@ -1,0 +1,10 @@
+<div class="col-sm-12 form-group">
+<%= form_for @books, url: "/books/#{@books.id}" do |f| %>
+
+	Book Title : <%= f.text_field :title %><br /><br />
+	Auther : <%= f.text_field :auther %><br />
+
+	<%= f.submit %>
+
+	<% end %>
+</div>

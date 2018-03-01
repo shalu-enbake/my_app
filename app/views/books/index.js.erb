@@ -1,0 +1,4 @@
+
+//$('#books').html('<%= escape_javascript(render("books")) %>');
+
+ $("#books").html("<%= escape_javascript(render partial: 'books', locals: { items: @books } ) %>"); 

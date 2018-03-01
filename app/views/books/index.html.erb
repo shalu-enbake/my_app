@@ -1,0 +1,26 @@
+<div class="col-sm-12">
+	<%= form_tag('/books', method: :get, id: "form_search", remote: true) do %>
+	<%= text_field_tag :search, params[:search] %>
+	<%= submit_tag "search", :id => "search_btn", :title => nil %>
+	
+	<% end %>
+
+	<div id="books">
+		<%= render partial: "books", locales: {books: @books} %>
+	</div>
+	
+	<%= link_to "Create", new_book_path %>
+</div>
+<script type="text/javascript">
+	$("#search_btn").click(function(evt){
+	    $.ajax({
+	      type: "get",
+	      url: "/books",
+	      data: $(this).serialize(),
+	      success: function(response) {
+	      }
+	    });
+	})
+</script>
+
+
