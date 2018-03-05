@@ -1,10 +1,18 @@
 class BooksController < ApplicationController
   before_action :authenticate_user!, :only => :index
+   before_action :check_authentication, :only => [:edit,:destroy]
+
 
   def index  
+    # byebug
     if params[:search].present?
-      @books = Book.where("auther LIKE ?", "%#{params[:search]}%")
-      
+      begin
+        Date.parse(params[:search])
+        @books = Book.where("(created_at BETWEEN ? AND ?)", params[:search].to_datetime, (params[:search].to_datetime + 1.day) )
+      rescue ArgumentError
+         # handle invalid date
+        @books = Book.where("LOWER(auther) LIKE ?","%#{params[:search].downcase}%")
+      end
     else
 	    @books = Book.all
     end
@@ -15,12 +23,12 @@ class BooksController < ApplicationController
   end
 
   def new
-  	@books = Book.new   
+  	@books = current_user.books.new  
   end
 
   def create
     
-    @books = Book.new(books_params)
+    @books = current_user.books.create(books_params)
     if @books.save
     	UsermailerMailer.welcome_email(current_user).deliver_now
     	redirect_to books_path
@@ -48,11 +56,22 @@ class BooksController < ApplicationController
 
   	redirect_to books_path
   end
+
+  private
+
+  def check_authentication
+    @books = Book.find(params[:id])
+
+    if current_user.id != @books.user_id
+      flash[:alert] = "You must be logged in to access this section"
+      redirect_to books_path
+    end
+  end
   
   private
   
   def books_params
-  	params.require(:book).permit(:title, :auther, :attachment)
+  	params.require(:book).permit(:title, :auther, :user_id, :attachment)
   
   end
 

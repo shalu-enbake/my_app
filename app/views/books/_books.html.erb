@@ -5,12 +5,14 @@
 			Book Title
 		</th>
 		<th>Auther</th>
+		<th>Date</th>
 		<th>Actions</th>
 	</tr>
 	<% @books.each do |book| %>
 	<tr>
 		<td><%= book.title %></td>
 		<td><%= book.auther %></td>
+		<td><%= book.created_at.to_date%></td>
 		<td><%= link_to "Edit", edit_book_path(book) %></td>
 		<td><%= link_to "Delete", book_path(book),method: :delete %></td>
 		<td><%= link_to "Download PDF", book.attachment_url %></td>
